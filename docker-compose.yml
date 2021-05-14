@@ -1,0 +1,76 @@
+# docker/docker-compose.yml
+version: '3'
+
+services:
+  database:
+    build:
+      context: database
+    container_name: db
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/data:/var/lib/mysql
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    restart: always
+    networks:
+      - symfony
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+
+  php-fpm:
+    build:
+      context: php-fpm
+    container_name: php
+    volumes:
+      - ./src:/var/www
+    networks:
+      - symfony
+    depends_on:
+      - database
+      - redis
+    environment:
+      - APP_ENV=${APP_ENV}
+      - APP_SECRET=${APP_SECRET}
+      - DATABASE_URL=mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@database:3306/${DATABASE_NAME}?serverVersion=5.7
+    restart: always
+
+  nginx:
+    build:
+      context: nginx
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/var/www
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/sites/:/etc/nginx/sites-available
+      - ./nginx/conf.d/:/etc/nginx/conf.d
+      - ./logs:/var/log
+    networks:
+      - symfony
+    depends_on:
+      - php-fpm
+    restart: always
+  redis:
+    image: redis:alpine
+    ports:
+        - 6379:6379
+    container_name: redis
+    volumes:
+        - ./redis/redis.conf:/redis.conf
+    networks:
+          - symfony
+    restart: always
+    command: [ "redis-server", "/redis.conf" ]
+
+networks:
+  symfony:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 12.100.0.0/24

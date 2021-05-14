@@ -1,3 +1,33 @@
+# Cache, session files and logs (Symfony3)
+src/var/cache/*
+src/var/logs/*
+src/var/sessions/*
+!src/var/cache/.gitkeep
+!src/var/logs/.gitkeep
+!src/var/sessions/.gitkeep
+
+# Parameters
+src/config/parameters.yml
+src/config/parameters.ini
+
+# Managed by Composer
+src/var/bootstrap.php.cache
+src/bin/*
+!src/bin/console
+!src/bin/symfony_requirements
+src/vendor/
+
+###> symfony/framework-bundle ###
+src/.env.local
+src/.env.local.php
+src/.env.*.local
+src/config/secrets/prod/prod.decrypt.private.php
+src/public/bundles/
+src/var/
+src/vendor/
+###< symfony/framework-bundle ###
+
+
 .idea/*
 .env
 database/data/*

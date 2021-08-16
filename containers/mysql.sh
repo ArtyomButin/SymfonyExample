@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose run -u root --rm --entrypoint bash db
+docker exec -itu root db bash

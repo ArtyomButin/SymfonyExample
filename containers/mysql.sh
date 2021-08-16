@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker-compose run -u mysql --rm --entrypoint bash db
+docker-compose run -u root --rm --entrypoint bash db

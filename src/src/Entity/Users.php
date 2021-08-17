@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\UsersRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping as ORM,
+    App\DBAL\Types\GenderType,
+    Fresh\DoctrineEnumBundle\Validator\Constraints as DoctrineAssert,
+    App\Repository\UsersRepository;
 
 /**
  * @ORM\Entity(repositoryClass=UsersRepository::class)
@@ -48,7 +50,8 @@ class Users
     private $age;
 
     /**
-     * @ORM\Column(type="gender")
+     * @ORM\Column(name="gender", type="gender", nullable=false)
+     * @DoctrineAssert\Enum(entity="App\DBAL\Types\GenderType")
      */
     private $gender;
 
@@ -111,6 +114,22 @@ class Users
     public function getPhone(): ?string
     {
         return $this->phone;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param string $gender
+     */
+    public function setGender(string $gender): void
+    {
+        $this->gender = $gender;
     }
 
     public function setPhone(?string $phone): self

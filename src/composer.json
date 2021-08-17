@@ -15,6 +15,7 @@
         "doctrine/doctrine-bundle": "^2.3",
         "doctrine/doctrine-migrations-bundle": "^3.1",
         "doctrine/orm": "^2.8",
+        "fresh/doctrine-enum-bundle": "^7.3",
         "nelmio/cors-bundle": "^2.1",
         "php-ds/php-ds": "^1.3",
         "phpdocumentor/reflection-docblock": "^5.2",

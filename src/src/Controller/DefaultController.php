@@ -35,6 +35,7 @@ class DefaultController extends AbstractController
      */
     public function simple(): Response
     {
+        dump(\Doctrine\DBAL\Types\Type::getTypesMap());
         return new Response('Simple! Easy! Great!');
     }
 

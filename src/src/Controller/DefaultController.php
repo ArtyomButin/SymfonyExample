@@ -58,6 +58,7 @@ class DefaultController extends AbstractController
     {
         $projectRoot = $this->getParameter('kernel.project_dir');
         $info = file_get_contents($projectRoot . '/var/log/dev.log');
-        echo $info;
+        return $this->json($info);
     }
+
 }

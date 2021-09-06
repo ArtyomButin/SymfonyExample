@@ -6,11 +6,12 @@ use Doctrine\ORM\Mapping as ORM,
     App\DBAL\Types\GenderType,
     Fresh\DoctrineEnumBundle\Validator\Constraints as DoctrineAssert,
     App\Repository\UsersRepository;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UsersRepository::class)
  */
-class Users
+class Users implements UserInterface
 {
     /**
      * @ORM\Id
@@ -22,38 +23,48 @@ class Users
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private ?string $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $second_name;
+    private ?string $second_name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $last_name;
+    private ?string $last_name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $email;
+    private ?string $email;
 
     /**
      * @ORM\Column(type="string", length=50, nullable=true)
      */
-    private $phone;
+    private ?string $phone;
 
     /**
      * @ORM\Column(type="integer")
      */
-    private $age;
+    private ?int $age;
 
     /**
      * @ORM\Column(name="gender", type="gender", nullable=false)
      * @DoctrineAssert\Enum(entity="App\DBAL\Types\GenderType")
      */
-    private $gender;
+    private mixed $gender;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=false)
+     */
+    private string $password;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private int $role;
 
     /**
      * @return int|null
@@ -119,7 +130,7 @@ class Users
     /**
      * @return mixed
      */
-    public function getGender()
+    public function getGender(): mixed
     {
         return $this->gender;
     }
@@ -149,5 +160,38 @@ class Users
         $this->age = $age;
 
         return $this;
+    }
+
+    /**
+     * @param array $params
+     * @return $this
+     */
+    public function addNewUser(array $params): self
+    {
+    }
+
+    public function getRoles(): array|int
+    {
+        return $this->role;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function getSalt(): ?string
+    {
+        return md5(uniqid('', true));
+    }
+
+    public function getUsername(): string
+    {
+        return $this->username;
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
     }
 }

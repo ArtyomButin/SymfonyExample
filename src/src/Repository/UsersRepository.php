@@ -15,15 +15,18 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class UsersRepository extends ServiceEntityRepository
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Users::class);
     }
 
-    // /**
-    //  * @return Users[] Returns an array of Users objects
-    //  */
-    /*
+    /**
+     * @return Users[] Returns an array of Users objects
+     *
+     */
     public function findByExampleField($value)
     {
         return $this->createQueryBuilder('u')
@@ -32,20 +35,18 @@ class UsersRepository extends ServiceEntityRepository
             ->orderBy('u.id', 'ASC')
             ->setMaxResults(10)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
 
-    /*
+    /**
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
     public function findOneBySomeField($value): ?Users
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.exampleField = :val')
             ->setParameter('val', $value)
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
     }
-    */
 }

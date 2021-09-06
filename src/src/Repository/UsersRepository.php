@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Users;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,6 +17,23 @@ use Symfony\Component\HttpFoundation\Request;
 class UsersRepository extends ServiceEntityRepository
 {
     /**
+     * @param int $page
+     * @param int $perPage
+     * @return QueryBuilder
+     */
+    public function getUsersWithPagination(int $page, int $perPage): QueryBuilder
+    {
+        return $this->createQueryBuilder('u')
+            ->select('u')
+            ->from($this->getClassName(), 'u')
+            ->orderBy('u.id', 'DESC')
+            ->setFirstResult($perPage * $page)
+            ->setMaxResults($perPage)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
@@ -27,7 +45,7 @@ class UsersRepository extends ServiceEntityRepository
      * @return Users[] Returns an array of Users objects
      *
      */
-    public function findByExampleField($value)
+    public function findByExampleField($value): array
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.exampleField = :val')

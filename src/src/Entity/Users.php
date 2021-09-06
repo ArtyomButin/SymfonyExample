@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Entity\Traits\CreatedAtTrait;
+use App\Entity\Traits\UpdatedAtTrait;
 use Doctrine\ORM\Mapping as ORM,
     App\DBAL\Types\GenderType,
     Fresh\DoctrineEnumBundle\Validator\Constraints as DoctrineAssert,
@@ -10,9 +12,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UsersRepository::class)
+ * @ORM\HasLifecycleCallbacks
  */
 class Users implements UserInterface
 {
+    use CreatedAtTrait, UpdatedAtTrait;
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

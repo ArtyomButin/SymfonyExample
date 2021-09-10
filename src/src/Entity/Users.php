@@ -5,13 +5,14 @@ namespace App\Entity;
 use App\Entity\Traits\CreatedAtTrait;
 use App\Entity\Traits\UpdatedAtTrait;
 use Doctrine\ORM\Mapping as ORM,
-    App\DBAL\Types\GenderType,
     Fresh\DoctrineEnumBundle\Validator\Constraints as DoctrineAssert,
     App\Repository\UsersRepository;
+use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UsersRepository::class)
+ * @OneToMany()
  * @ORM\HasLifecycleCallbacks
  */
 class Users implements UserInterface

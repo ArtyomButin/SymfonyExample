@@ -29,6 +29,9 @@ src/vendor/
 
 
 .idea/*
+containers/.idea/
+control/.idea/
+src/.idea/
 .env
 database/data/*
 logs/*

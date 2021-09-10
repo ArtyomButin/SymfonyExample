@@ -7,12 +7,10 @@ use App\Entity\Traits\UpdatedAtTrait;
 use Doctrine\ORM\Mapping as ORM,
     Fresh\DoctrineEnumBundle\Validator\Constraints as DoctrineAssert,
     App\Repository\UsersRepository;
-use Doctrine\ORM\Mapping\OneToMany;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UsersRepository::class)
- * @OneToMany()
  * @ORM\HasLifecycleCallbacks
  */
 class Users implements UserInterface
@@ -197,6 +195,10 @@ class Users implements UserInterface
 
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function isPremiumClient(): bool
+    {
+        return false;
     }
 }

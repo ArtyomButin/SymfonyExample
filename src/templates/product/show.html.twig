@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ product.name }}
+{% endblock %}
+
+{% block body %}
+    <h1>{{ product.name }}</h1>
+    <h1>{{ product.price }}</h1>
+    <h1>{{ product.description }}</h1>
+    {% if product.photo %}
+    <img class="img-fluid"
+         style="max-width: 200px; max-height: 200px"
+         src="{{ asset('uploads/photo/' ~ product.photo) }}" alt="{{ product.name }}"/>
+    {% endif %}
+    <hr>
+    <a href="{{ redirectToList }}">Go Back</a>
+{% endblock %}

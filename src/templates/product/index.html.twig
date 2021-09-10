@@ -1,37 +1,34 @@
-<!DOCTYPE html>
+{% extends 'base.html.twig' %}
 
-<title>Hello ProductController!</title>
+{% block title %}SymfonyExample{% endblock %}
 
 {% block body %}
-    <style>
-        .example-wrapper {
-            margin: 1em auto;
-            max-width: 800px;
-            width: 95%;
-            font: 18px/1.5 sans-serif;
-        }
-
-        .example-wrapper code {
-            background: #F5F5F5;
-            padding: 2px 6px;
-        }
-    </style>
-
-    <div class="example-wrapper">
-        <h1>Products Page  ✅</h1>
-
-        {% if products is defined %}
+    {% if products %}
+        <table id="products" class="table table-striped">
+            <thead>
+            <tr>
+                <th>Products Title</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
             {% for product in products %}
-                <ul>
-                    <li><a href="{{ product.url}}"><h2>{{ product.name }}</h2></a></li>
-                    <li>{{ product.price }}</li>
-                    <li>{{ product.description }}</li>
-                </ul>
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>
+                        <a href="/product/{{ product.id }}" class="btn btn-dark">Show</a>
+                        <a href="/product/edit/{{ product.id }}" class="btn btn-light">Edit</a>
+                        <a href="#" class="btn btn-danger delete-product" data-id="{{ product.id }}">Delete</a>
+                    </td>
+                </tr>
             {% endfor %}
-        {% elseif product is defined %}
-        <h2>{{ product.name }}</h2>
-        <p>Price {{ product.price }}</p>
-        <p>Description {{ product.description }}</p>
-        {% endif %}
-    </div>
+            </tbody>
+        </table>
+    {% else %}
+        <p>No products to display</p>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/js/main.js"></script>
 {% endblock %}

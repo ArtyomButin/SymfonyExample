@@ -36,6 +36,27 @@ class Product
     private string $description;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private string $photo;
+
+    /**
+     * @return string
+     */
+    public function getPhoto(): string
+    {
+        return $this->photo;
+    }
+
+    /**
+     * @param string $photo
+     */
+    public function setPhoto(string $photo): void
+    {
+        $this->photo = $photo;
+    }
+
+    /**
      * @return int|null
      */
     public function getId(): ?int
@@ -103,5 +124,13 @@ class Product
         $this->description = $description;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPremium():bool
+    {
+        return false;
     }
 }

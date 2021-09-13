@@ -5,14 +5,19 @@ namespace App\Controller;
 use App\Entity\Product;
 use App\Repository\ProductRepository;
 
+use Psr\Cache\InvalidArgumentException;
+use Symfony\Component\Cache\Adapter\RedisAdapter,
+    Symfony\Component\Cache\Marshaller\DefaultMarshaller,
+    Symfony\Component\Cache\Marshaller\DeflateMarshaller;
+
 use App\Service\FileUploader;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Cache\CacheItem;
+use Symfony\Component\Cache\Exception\CacheException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +27,9 @@ use Exception;
 use Psr\Log\LoggerInterface;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType,
-    Symfony\Component\Form\Extension\Core\Type\SubmitType;
+    Symfony\Component\Form\Extension\Core\Type\SubmitType,
+    Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Contracts\Cache\ItemInterface;
 
 class ProductController extends AbstractController
 {
@@ -32,14 +39,30 @@ class ProductController extends AbstractController
      * @param ProductRepository $productRepository
      * @param LoggerInterface $logger
      * @return Response
+     * @throws InvalidArgumentException|CacheException
      */
     public function index(
         RequestStack $request_stack,
         ProductRepository $productRepository,
         LoggerInterface $logger
     ): Response {
-        $products = $productRepository
-            ->findAll();
+        opcache_reset();
+        $client = RedisAdapter::createConnection(
+            'redis://localhost'
+        );
+        $marshaller = new DeflateMarshaller(new DefaultMarshaller());
+        $cachePool = new RedisAdapter($client, 'products', 0, $marshaller);
+        $products_in_cache = $cachePool->getItem('products_list');
+        if (!$products_in_cache->isHit()) {
+            $products_in_cache->set($productRepository->findAll());
+            $cachePool->save($products_in_cache);
+        }
+        if ($cachePool->hasItem('products_list')) {
+            $products_in_cache = $cachePool->getItem('products_list');
+        }
+        $products = $products_in_cache->get('products_list', function (CacheItem $item) {
+            $item->expiresAfter(30);
+        },1.0);
         if (!$products) {
             $logger->error('products not found');
             throw $this->createNotFoundException(
@@ -77,6 +100,7 @@ class ProductController extends AbstractController
             ])
             ->add('Photo', FileType::class, [
                 'required' => false,
+                'empty_data' => "empty",
                 'label' => 'Product Photo',
                 'attr' => ['class' => 'form-control-file'],
             ])
@@ -90,11 +114,12 @@ class ProductController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $product = $form->getData();
-
             $photo = $form->get('Photo')->getData();
-            if($photo) {
+            if ($photo instanceof UploadedFile) {
                 $photoFileName = $fileUploader->upload($photo);
                 $product->setPhoto($photoFileName);
+            } else {
+                $product->setPhoto("not-found-image.jpg");
             }
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($product);
@@ -117,7 +142,7 @@ class ProductController extends AbstractController
      * @param FileUploader $uploader
      * @return Response
      */
-    public function showProduct(int $id, Product $product ,FileUploader $uploader): Response
+    public function showProduct(int $id, Product $product, FileUploader $uploader): Response
     {
         return $this->render('product/show.html.twig', [
             'product' => $product,
@@ -165,6 +190,7 @@ class ProductController extends AbstractController
             ])
             ->add('Photo', FileType::class, [
                 'required' => false,
+                'empty_data' => 'empty',
                 'data_class' => null,
                 'label' => 'Product Photo',
                 'attr' => ['class' => 'form-control-file'],
@@ -174,14 +200,15 @@ class ProductController extends AbstractController
                 'attr' => ['class' => 'btn btn-primary mt-3'],
             ])
             ->getForm();
-
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
             $photo = $form->get('Photo')->getData();
-            if($photo) {
+
+            if ($photo instanceof UploadedFile) {
                 $photoFileName = $fileUploader->upload($photo);
                 $product->setPhoto($photoFileName);
+            } elseif ($product->getPhoto() === 'empty' || !$product->getPhoto()) {
+                $product->setPhoto("not-found-image.jpg");
             }
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->flush();

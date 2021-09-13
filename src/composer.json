@@ -2,7 +2,7 @@
     "description": "symfony test project",
     "type": "project",
     "license": "proprietary",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": ">=8.0",
@@ -21,6 +21,7 @@
         "nelmio/cors-bundle": "^2.1",
         "php-ds/php-ds": "^1.3",
         "phpdocumentor/reflection-docblock": "^5.2",
+        "predis/predis": "^1.1",
         "sensio/framework-extra-bundle": "^6.1",
         "sonata-project/admin-bundle": "4.0.0-alpha-2",
         "sonata-project/doctrine-orm-admin-bundle": "4.0.0-alpha-2",
@@ -31,8 +32,10 @@
         "symfony/flex": "^1.3.1",
         "symfony/form": "5.2.*",
         "symfony/framework-bundle": "5.2.*",
+        "symfony/intl": "5.2.*",
         "symfony/mime": "5.2.*",
         "symfony/monolog-bundle": "^3.7",
+        "symfony/polyfill-apcu": "^1.23",
         "symfony/property-access": "5.2.*",
         "symfony/property-info": "5.2.*",
         "symfony/proxy-manager-bridge": "5.2.*",
@@ -92,7 +95,7 @@
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.4",
-        "symfony/maker-bundle": "^1.30",
+        "symfony/maker-bundle": "^1.33",
         "vimeo/psalm": "^4.7"
     }
 }

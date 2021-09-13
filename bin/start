@@ -1,0 +1,2 @@
+#!/bin/bash
+sudo chmod 755 -R database/data/ && sh control/up.sh

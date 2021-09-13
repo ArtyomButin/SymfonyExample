@@ -17,6 +17,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\Cache\Exception\CacheException;
+use Symfony\Component\Form\Extension\Core\Type\MoneyType;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -89,10 +90,16 @@ class ProductController extends AbstractController
         $product = new Product();
         $form = $this->createFormBuilder($product)
             ->add('Name', TextType::class, [
-                'attr' => ['class' => 'form-control']
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'Product Name',
+                    ]
             ])
-            ->add('Price', TextType::class, [
+            ->add('Price', MoneyType::class, [
                 'required' => 0.0,
+                'divisor' => 100,
+                'currency' => 'RUB',
+                'html5' => true,
                 'attr' => ['class' => 'form-control']
             ])
             ->add('Description', TextType::class, [

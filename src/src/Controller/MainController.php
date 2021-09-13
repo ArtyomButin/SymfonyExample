@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\MessageGenerator;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,28 +12,21 @@ use Symfony\Component\Routing\Annotation\Route;
 class MainController extends AbstractController
 {
     /**
-     * @Route("/number")
+     * @Route("/")
      * @throws Exception
      */
-    public function number(): Response
+    public function menu(Request $request): Response
     {
-        $number = random_int(0, 100);
-
-        return $this->render('number.html.twig', [
-            'number' => $number,
+        $data = [
+            'authorized' => false,
+            'test' => 'test'
+        ];
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) {
+            $data['authorized'] = false;
+        }
+        return $this->render('default/index.html.twig', [
+            'data' => $data,
         ]);
     }
 
-    /**
-     * @param MessageGenerator $messageGenerator
-     * @return Response
-     */
-    public function new(MessageGenerator $messageGenerator): Response
-    {
-        $message = $messageGenerator->getHappyMessage();
-        $this->addFlash('success', $message);
-        return $this->render('number.html.twig', [
-            'number' => $message,
-        ]);
-    }
 }

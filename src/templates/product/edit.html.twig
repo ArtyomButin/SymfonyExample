@@ -6,6 +6,8 @@
 
 {% block body %}
     {{ form_start(form) }}
-    {{ form_widget(form) }}
+    <div class="form-control">
+        {{ form_widget(form) }}
+    </div>
     {{ form_end(form) }}
 {% endblock %}

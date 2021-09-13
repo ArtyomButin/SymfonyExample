@@ -15,7 +15,7 @@ class DefaultController extends AbstractController
 {
 
     /**
-     * @Route ("/hello/{name}")
+     *  ("/hello/{name}")
      * @param string $name
      * @param LoggerInterface $logger
      * @return Response

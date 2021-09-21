@@ -47,7 +47,6 @@ class ProductController extends AbstractController
         ProductRepository $productRepository,
         LoggerInterface $logger
     ): Response {
-        opcache_reset();
         $client = RedisAdapter::createConnection(
             'redis://localhost'
         );
@@ -66,9 +65,6 @@ class ProductController extends AbstractController
         },1.0);
         if (!$products) {
             $logger->error('products not found');
-            throw $this->createNotFoundException(
-                'products not found'
-            );
         }
 
         foreach ($products as $product) {
